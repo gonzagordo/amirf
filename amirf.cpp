@@ -2,38 +2,12 @@
  EDITADA POR GONZAGORDO
  **/
 
-/*
-    Copyright (c) 2007 Stefan Engelke <mbox@stefanengelke.de>
-
-    Permission is hereby granted, free of charge, to any person 
-    obtaining a copy of this software and associated documentation 
-    files (the "Software"), to deal in the Software without 
-    restriction, including without limitation the rights to use, copy, 
-    modify, merge, publish, distribute, sublicense, and/or sell copies 
-    of the Software, and to permit persons to whom the Software is 
-    furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be 
-    included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
-    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
-    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-    WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-    DEALINGS IN THE SOFTWARE.
-
-    $Id: mirf.cpp 30 2009-11-12 20:15:56Z nisburgh $
-*/
-
 #include "amirf.h"
 
-// Defines for setting the MiRF registers for transmitting or receiving mode
-
+//Defines for setting the MiRF registers for transmitting or receiving mode
 Nrf24l AMirf = Nrf24l();
 
+//CONSTRUCTOR
 Nrf24l::Nrf24l(){
 	cePin = 8;
 	csnPin = 7;
@@ -41,21 +15,21 @@ Nrf24l::Nrf24l(){
 	payload = 16;
 
 }
-
+//recibir por el SPI
 void Nrf24l::transferSync(uint8_t *dataout,uint8_t *datain,uint8_t len){
 	uint8_t i;
 	for(i = 0;i < len;i++){
 		datain[i] = SPI.transfer(dataout[i]);
 	}
 }
-
+//transmitir por el SPI
 void Nrf24l::transmitSync(uint8_t *dataout,uint8_t len){
 	uint8_t i;
 	for(i = 0;i < len;i++){
 		SPI.transfer(dataout[i]);
 	}
 }
-
+//inicializa pines he inicializa SPI
 void Nrf24l::init() 
 // Initializes pins to communicate with the MiRF module
 // Should be called in the early initializing phase at startup.
@@ -67,15 +41,12 @@ void Nrf24l::init()
     csnHi();
 
     // Initialize SPI module
-    //SPI.mode((1 << SPR0));
-
-    /*
-     * Set double clock rate.
-     */
-
-    SPSR = (1 << SPI2X);
+	// Setup SPI++++++++++++++++++++++++++++++
+	SPI.begin();
+	SPI.setBitOrder(MSBFIRST);
+	SPI.setDataMode(SPI_MODE0);
+	SPI.setClockDivider(SPI_CLOCK_DIV16);
 }
-
 
 void Nrf24l::config() 
 // Sets the important registers in the MiRF module and powers the module
