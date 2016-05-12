@@ -35,6 +35,7 @@ class Nrf24l {
 		void configRegister(uint8_t reg, uint8_t value);
 		void readRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		void writeRegister(uint8_t reg, uint8_t * value, uint8_t len);
+		int Recived_Payload_size();  //funciona  añadida por mi
 		void powerUpRx();
 		void powerUpTx();
 		

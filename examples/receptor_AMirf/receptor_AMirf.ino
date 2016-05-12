@@ -14,7 +14,7 @@ byte direccion[5];
 void setup()
 {
   Serial.begin(9600);
- Serial.println( "receptor en pruebas amirf " );
+ Serial.println( "receptor en pruebas amirf (tamaño) " );
  
    // arrancamos y configuramos la comunicacion spi con el modulo 
    AMirf.init();
@@ -36,7 +36,7 @@ void loop()
      AMirf.getData(dato_recibido);
        Serial.write(dato_recibido,7);
        Serial.print( "  tamaño dato = " );
-       Serial.println(Recived_Payload_size());
+       Serial.println(AMirf.Recived_Payload_size());
    }
 
 /*
@@ -71,15 +71,3 @@ for (int x=10; x<16; x++)
 
 
 //+++++++++++++++++++++++++++++subrutinas++++++++++++++++++++++++++
-int Recived_Payload_size()  //funciona
-
-// Reads an array of bytes from the given start position in the MiRF registers.
-
-{
-    int value;
-    AMirf.csnLow();
-    SPI.transfer(R_RX_PL_WID);//send comand
-    value = SPI.transfer(value);//read value
-    AMirf.csnHi();
-    return (value);
-}

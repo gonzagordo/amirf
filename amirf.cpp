@@ -103,6 +103,15 @@ extern bool Nrf24l::rxFifoEmpty(){
 	return (fifoStatus & (1 << RX_EMPTY));
 }
 
+// devuelve como valor el tamaño del payload recibido funciona
+extern int Nrf24l::Recived_Payload_size()  {
+    int value;
+    csnLow();
+    SPI.transfer(R_RX_PL_WID);//send comand
+    value = SPI.transfer(value);//read value
+    csnHi();
+    return (value);
+}
 
 
 extern void Nrf24l::getData(uint8_t * data) 
