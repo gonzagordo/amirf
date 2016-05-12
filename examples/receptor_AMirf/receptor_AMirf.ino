@@ -7,7 +7,8 @@
 #include <nRF24L01.h>
 
 uint8_t  dato[5];
-uint8_t dato_recibido[1];
+byte dato_recibido[7];
+char letra[7];
 uint8_t  corto=1;
 byte direccion[5];
 void setup()
@@ -18,7 +19,7 @@ void setup()
    // arrancamos y configuramos la comunicacion spi con el modulo 
    AMirf.init();
    //configuramos canal y tamaño de dato
-   AMirf.payload = 1;
+   AMirf.payload = 7;
    AMirf.channel = 1;
    // nombre del NRF24l01 para la recepccion 
    AMirf.setRADDR((byte *)"RX_01"); 
@@ -33,9 +34,9 @@ void loop()
   
  if (AMirf.dataReady()){
      AMirf.getData(dato_recibido);
-       if (dato_recibido!=0){
-       Serial.println(dato_recibido[0]);
-        }
+       Serial.write(dato_recibido,7);
+       Serial.print( "  tamaño dato = " );
+       Serial.println(Recived_Payload_size());
    }
 
 /*
@@ -66,4 +67,19 @@ for (int x=10; x<16; x++)
         }*/
 
  
+}
+
+
+//+++++++++++++++++++++++++++++subrutinas++++++++++++++++++++++++++
+int Recived_Payload_size()  //funciona
+
+// Reads an array of bytes from the given start position in the MiRF registers.
+
+{
+    int value;
+    AMirf.csnLow();
+    SPI.transfer(R_RX_PL_WID);//send comand
+    value = SPI.transfer(value);//read value
+    AMirf.csnHi();
+    return (value);
 }

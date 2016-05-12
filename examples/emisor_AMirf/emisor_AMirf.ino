@@ -6,7 +6,7 @@
 #include <nRF24L01.h>
 
 uint8_t  dato[5];
-uint8_t dato_a_enviar[1]= {55,};
+char dato_a_enviar[7]= {"tomaa0",};
 uint8_t  corto=1;
 byte direccion[5];
 void setup()
@@ -19,8 +19,8 @@ void setup()
    //ponemos la direccion del modulo al que vamos a emitir
     AMirf.setTADDR((byte *)"RX_01");
    //configuramos canal y tamaño de dato
-   AMirf.payload = 1;
-   AMirf.channel = 1;
+    AMirf.channel = 1;
+    AMirf.payload = 7;
    // aplicamos valores y arrancamos modulo como receptor
    AMirf.config();
    AMirf.configRegister(SETUP_RETR,B0001101);
@@ -62,7 +62,7 @@ void loop()
 AMirf.send((byte *)dato_a_enviar);
 Serial.print( "SE VA A ENVIAR =    " );
 Serial.println( dato_a_enviar[0] );
-dato_a_enviar[0]++;
+dato_a_enviar[5]++;
 
 AMirf.readRegister(OBSERVE_TX,&dato[0],1);
 Serial.print( "repeticiones =    " );
