@@ -36,6 +36,8 @@ class Nrf24l {
 		void readRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		void writeRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		int Recived_Payload_size();  //funciona  añadida por mi
+		void enable_DPL();
+		void disable_DPL();
 		void powerUpRx();
 		void powerUpTx();
 		
@@ -46,6 +48,13 @@ class Nrf24l {
 		void ceLow();
 		void flushRx();
 
+		void debug ();
+		
+		/*
+		 * modo payload dyn/static
+		 */
+
+		bool payload_mode = 0; //0 static 1 dinamic
 		/*
 		 * In sending mode.
 		 */

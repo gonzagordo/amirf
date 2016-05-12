@@ -102,7 +102,8 @@ extern bool Nrf24l::rxFifoEmpty(){
 	readRegister(FIFO_STATUS,&fifoStatus,sizeof(fifoStatus));
 	return (fifoStatus & (1 << RX_EMPTY));
 }
-
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // devuelve como valor el tamaño del payload recibido funciona
 extern int Nrf24l::Recived_Payload_size()  {
     int value;
@@ -112,6 +113,36 @@ extern int Nrf24l::Recived_Payload_size()  {
     csnHi();
     return (value);
 }
+
+//activa la funcion de dinamic payload en todos los pipes y el envio
+extern void Nrf24l::enable_DPL(){
+	uint8_t FEATURE_VIEJO;
+		
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		configRegister(FEATURE, 1<< EN_DPL);
+		
+		configRegister( DYNPD, 1<< DPL_P0 |  1<< DPL_P1 |  1<< DPL_P2 |  1<< DPL_P3 |  1<< DPL_P4 |  1<< DPL_P5 );
+		
+		payload_mode=1;// dinamic payload
+		Serial.println( "dpl activado" );
+	}
+
+//desactiva la funcion de dinamic payload en todos los pipes y el envio
+extern void Nrf24l::disable_DPL(){
+	uint8_t FEATURE_VIEJO;
+		
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		configRegister(FEATURE, 0<< EN_DPL);
+		
+		configRegister( DYNPD, 0<< DPL_P0 |  0<< DPL_P1 |  0<< DPL_P2 |  0<< DPL_P3 |  0<< DPL_P4 |  0<< DPL_P5 );
+		
+		payload_mode=0;// static payload
+		Serial.println( "dpl desactivado" );
+	}
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 extern void Nrf24l::getData(uint8_t * data) 
@@ -259,3 +290,41 @@ void Nrf24l::csnHi(){
 void Nrf24l::csnLow(){
 	digitalWrite(csnPin,LOW);
 }
+
+void Nrf24l::debug (){
+		uint8_t  dato[5];
+		Serial.println( "++++++++++++++++++++++++++++++ " );
+		Serial.println( "++++++configuracion+++++++++++" );
+	  for (int x=0; x<30; x++)
+        {
+                readRegister(x,&dato[0],1);
+                
+                
+                Serial.print( "reg  " );
+                Serial.print(x,HEX);
+                Serial.print( " = " );
+                Serial.print(dato[0],HEX);
+                Serial.print( " reg  " );
+                Serial.print(x,HEX);
+                Serial.print( " = " );
+                Serial.println(dato[0],BIN);
+                
+        }
+        Serial.println( "++++++++++++++++++++++++++++++ " );
+		Serial.println( "++++++direcciones+++++++++++" );
+for (int x=10; x<16; x++)
+        {
+                readRegister(x,&dato[0],5);
+                
+                
+                Serial.print( "reg  " );
+                Serial.print(x,HEX);
+                Serial.print( " = " );               
+                Serial.write(dato,5);
+                Serial.print( "\r \n" );
+        }
+        Serial.println( "++++++++++++++++++++++++++++++ " );
+        Serial.println( "++++++++++++++++++++++++++++++ " );
+  
+	  }
+  
