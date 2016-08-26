@@ -140,7 +140,25 @@ extern void Nrf24l::disable_DPL(){
 		Serial.println( "dpl desactivado" );
 	}
 
+//carga datos de retorno (aknolage) para un pipe concreto 
+extern void Nrf24l::writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len)
+ {
+	 
+	 
+	 //mioooooo
+	Serial.println ( (W_ACK_PAYLOAD | ( pipe & 0b111 ) ),BIN);// debuuuuuuggggggggggggggggg
+    
+    csnLow();                    // Pull down chip select
+    SPI.transfer(W_ACK_PAYLOAD | ( pipe & 0b111 ) ); // Write cmd to write aknowlage_payload
+    transmitSync(value,len);   // Write payload
+    csnHi();                    // Pull up chip select
 
+	 //miooooooo
+	 
+			
+  
+  }
+ 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

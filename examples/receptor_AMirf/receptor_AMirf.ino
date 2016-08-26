@@ -8,6 +8,7 @@
 
 uint8_t  dato[5];
 byte dato_recibido[32];
+byte ack_dato[]= {"0retonno"};
 char letra[7];
 uint8_t  corto=1;
 byte direccion[5];
@@ -28,7 +29,7 @@ void setup()
    
    AMirf.enable_DPL();
    AMirf.debug();
- 
+   AMirf.writeAckPayload(1,(byte *) ack_dato, 8);
 }
 
 void loop() 
@@ -42,6 +43,13 @@ void loop()
        Serial.write(dato_recibido,tamano_paquete);
        Serial.print( "  tamaño dato = " );
        Serial.println(tamano_paquete);
+       
+       ack_dato[0]++;
+       AMirf.writeAckPayload(1,(byte *) ack_dato, 8);
+       Serial.print( " se envia de vuelta=  " );
+       Serial.write( ack_dato,8);
+       Serial.print( "\n" ); //salto de line
+       
 		}
 
 }
