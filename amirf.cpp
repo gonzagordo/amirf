@@ -119,12 +119,46 @@ extern void Nrf24l::enable_DPL(){
 	uint8_t FEATURE_VIEJO;
 		
 		readRegister(FEATURE,&FEATURE_VIEJO,1);
-		configRegister(FEATURE, 1<< EN_DPL);
+		configRegister(FEATURE, 1<< EN_DPL); //ACTIVA FUNCION DYNAMIC PAYLOAD 
 		
 		configRegister( DYNPD, 1<< DPL_P0 |  1<< DPL_P1 |  1<< DPL_P2 |  1<< DPL_P3 |  1<< DPL_P4 |  1<< DPL_P5 );
-		
+		//ACTIVA DINAMIC PAYLOAD EN TODOS LOS CANALES 
 		payload_mode=1;// dinamic payload
 		Serial.println( "dpl activado" );
+		
+		//+++++++++++debug++++++++++++++++++++++++++++++
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		Serial.println( "feature resultante" );
+		Serial.println(FEATURE_VIEJO,BIN);
+		//++++++++++++fin debug++++++++++++++++++++++++		
+		
+	}
+//activa la funcion de payload en el ack packet	(REQUIERE DYNAMIC PAYLOAD ACTIVO )
+	extern void Nrf24l::enable_ack_payload(){
+	uint8_t FEATURE_VIEJO;
+		
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		
+		configRegister(FEATURE, 1<< EN_DPL|1<< EN_ACK_PAY);
+		//+++++++++++debug++++++++++++++++++++++++++++++
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		Serial.println( "feature resultante" );
+		Serial.println(FEATURE_VIEJO,BIN);
+		//++++++++++++fin debug++++++++++++++++++++++++		
+				
+		Serial.println( "ACK PAYLOAD ACTIVADO" );
+	}
+	
+//desactiva la funcion de payload en el ack packet	
+	extern void Nrf24l::disable_ack_payload(){
+	uint8_t FEATURE_VIEJO;
+		
+		readRegister(FEATURE,&FEATURE_VIEJO,1);
+		
+		configRegister(FEATURE, 0<< EN_ACK_PAY);
+		
+		Serial.println( "ACK PAYLOAD DESACTIVADO" );
+		
 	}
 
 //desactiva la funcion de dinamic payload en todos los pipes y el envio
@@ -143,19 +177,12 @@ extern void Nrf24l::disable_DPL(){
 //carga datos de retorno (aknolage) para un pipe concreto 
 extern void Nrf24l::writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len)
  {
-	 
-	 
-	 //mioooooo
-	Serial.println ( (W_ACK_PAYLOAD | ( pipe & 0b111 ) ),BIN);// debuuuuuuggggggggggggggggg
     
     csnLow();                    // Pull down chip select
     SPI.transfer(W_ACK_PAYLOAD | ( pipe & 0b111 ) ); // Write cmd to write aknowlage_payload
     transmitSync(value,len);   // Write payload
     csnHi();                    // Pull up chip select
 
-	 //miooooooo
-	 
-			
   
   }
  
@@ -287,6 +314,13 @@ void Nrf24l::flushRx(){
     SPI.transfer( FLUSH_RX );
     csnHi();
 }
+
+void Nrf24l::flushTx(){
+    csnLow();
+    SPI.transfer( FLUSH_TX );
+    csnHi();
+}
+
 
 void Nrf24l::powerUpTx(){
 	PTX = 1;

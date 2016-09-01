@@ -35,12 +35,16 @@ class Nrf24l {
 		void configRegister(uint8_t reg, uint8_t value);
 		void readRegister(uint8_t reg, uint8_t * value, uint8_t len);
 		void writeRegister(uint8_t reg, uint8_t * value, uint8_t len);
-		int Recived_Payload_size();  //funciona  añadida por mi
 		
+		void enable_ack_payload();// en pruebas
+		void disable_ack_payload();// en pruebas
 		void writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len);// en pruebas
 		
+		  //funcionan  añadidas por mi		
+		int Recived_Payload_size();
 		void enable_DPL();
 		void disable_DPL();
+		//+++++++++++++++++++++++++++
 		void powerUpRx();
 		void powerUpTx();
 		
@@ -50,6 +54,7 @@ class Nrf24l {
 		void ceHi();
 		void ceLow();
 		void flushRx();
+		void flushTx();
 
 		void debug ();
 		

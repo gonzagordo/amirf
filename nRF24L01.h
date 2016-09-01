@@ -76,6 +76,7 @@
 #define DPL_P1	    1
 #define DPL_P0	    0
 #define EN_DPL	    2
+#define EN_ACK_PAY  1
 
 
 /* Instruction Mnemonics */

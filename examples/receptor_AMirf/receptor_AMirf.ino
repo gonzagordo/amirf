@@ -8,7 +8,9 @@
 
 uint8_t  dato[5];
 byte dato_recibido[32];
-byte ack_dato[]= {"0retonno"};
+byte ack_dato[]= {"0AAAAAAA"};
+int retorno_size =sizeof(ack_dato);
+int canal_retorno= 1;
 char letra[7];
 uint8_t  corto=1;
 byte direccion[5];
@@ -28,8 +30,9 @@ void setup()
    AMirf.config();
    
    AMirf.enable_DPL();
+   AMirf.enable_ack_payload();
    AMirf.debug();
-   AMirf.writeAckPayload(1,(byte *) ack_dato, 8);
+   AMirf.writeAckPayload(canal_retorno,(byte *) ack_dato, retorno_size);
 }
 
 void loop() 
@@ -40,15 +43,16 @@ void loop()
 	 tamano_paquete = AMirf.Recived_Payload_size();
 	 AMirf.payload = tamano_paquete;
      AMirf.getData(dato_recibido);
+	   Serial.print( "<-recibido = " );
        Serial.write(dato_recibido,tamano_paquete);
-       Serial.print( "  tamaño dato = " );
+       Serial.print( "  bytes de dato = " );
        Serial.println(tamano_paquete);
        
        ack_dato[0]++;
-       AMirf.writeAckPayload(1,(byte *) ack_dato, 8);
-       Serial.print( " se envia de vuelta=  " );
+       AMirf.writeAckPayload(canal_retorno,(byte *) ack_dato, retorno_size);
+       Serial.print( "->se envia de vuelta=  " );
        Serial.write( ack_dato,8);
-       Serial.print( "\n" ); //salto de line
+       Serial.println( "" ); //salto de linea
        
 		}
 
