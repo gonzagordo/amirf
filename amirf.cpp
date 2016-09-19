@@ -174,8 +174,8 @@ extern void Nrf24l::disable_DPL(){
 		Serial.println( "dpl desactivado" );
 	}
 
-//carga datos de retorno (aknolage) para un pipe concreto 
-extern void Nrf24l::writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len)
+//carga datos de retorno (aknolage) para un pipe concreto calcula automaticamete el tamaño
+extern void Nrf24l::writeAckPayload(uint8_t pipe, uint8_t * value, int len)
  {
     
     csnLow();                    // Pull down chip select
@@ -190,12 +190,14 @@ extern void Nrf24l::writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len)
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-extern void Nrf24l::getData(uint8_t * data) 
-// Reads payload bytes into data array
+extern int Nrf24l::getData(uint8_t * data) 
+// Reads payload bytes into data array chose payload size dinamically
 {
+	int num_bytes;
+	num_bytes=Recived_Payload_size();	
     csnLow();                               // Pull down chip select
     SPI.transfer( R_RX_PAYLOAD );            // Send cmd to read rx payload
-    transferSync(data,data,payload); // Read payload
+    transferSync(data,data,num_bytes); // Read payload
     csnHi();                               // Pull up chip select
     // NVI: per product spec, p 67, note c:
     //  "The RX_DR IRQ is asserted by a new packet arrival event. The procedure
@@ -206,6 +208,7 @@ extern void Nrf24l::getData(uint8_t * data)
     // So if we're going to clear RX_DR here, we need to check the RX FIFO
     // in the dataReady() function
     configRegister(STATUS,(1<<RX_DR));   // Reset status register
+    return num_bytes;
 }
 
 void Nrf24l::configRegister(uint8_t reg, uint8_t value)
@@ -267,6 +270,42 @@ void Nrf24l::send(uint8_t * value)
 
     ceHi();                     // Start transmission
 }
+
+
+void Nrf24l::dynamic_send(uint8_t * value, uint8_t len) 
+// Sends a data package to the default address. Be sure to send the correct
+// amount of bytes as configured as payload on the receiver.
+{
+    uint8_t status;
+    status = getStatus();
+
+    while (PTX) {
+	    status = getStatus();
+
+	    if((status & ((1 << TX_DS)  | (1 << MAX_RT)))){
+		    PTX = 0;
+		    break;
+	    }
+    }                  // Wait until last paket is send
+
+    ceLow();
+    
+    powerUpTx();       // Set to transmitter mode , Power up
+    
+    csnLow();                    // Pull down chip select
+    SPI.transfer( FLUSH_TX );     // Write cmd to flush tx fifo
+    csnHi();                    // Pull up chip select
+    
+    csnLow();                    // Pull down chip select
+    SPI.transfer( W_TX_PAYLOAD ); // Write cmd to write payload
+    transmitSync(value,len);   // Write payload
+    csnHi();                    // Pull up chip select
+
+    ceHi();                     // Start transmission
+}
+
+
+
 
 /**
  * isSending.

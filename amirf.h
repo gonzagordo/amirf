@@ -21,13 +21,14 @@ class Nrf24l {
 		void init();
 		void config();
 		void send(uint8_t *value);
+		void dynamic_send(uint8_t *value, uint8_t len);
 		void setRADDR(uint8_t * adr);
 		void setTADDR(uint8_t * adr);
 		bool dataReady();
 		bool isSending();
 		bool rxFifoEmpty();
 		bool txFifoEmpty();
-		void getData(uint8_t * data);
+		int getData(uint8_t * data);
 		uint8_t getStatus();
 		
 		void transmitSync(uint8_t *dataout,uint8_t len);
@@ -38,7 +39,7 @@ class Nrf24l {
 		
 		void enable_ack_payload();// en pruebas
 		void disable_ack_payload();// en pruebas
-		void writeAckPayload(uint8_t pipe, uint8_t * value, uint8_t len);// en pruebas
+		void writeAckPayload(uint8_t pipe, uint8_t *value, int len);// en pruebas
 		
 		  //funcionan  añadidas por mi		
 		int Recived_Payload_size();
