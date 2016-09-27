@@ -51,6 +51,11 @@ void loop()
        Serial.print( "  bytes de dato = " );
        Serial.println(recepcion_size);
        
+       Serial.println(dato_recibido[0],DEC);
+       Serial.println(dato_recibido[1],DEC);
+       Serial.println(dato_recibido[2],DEC);
+       
+       
        ack_dato[0]++;
        AMirf.writeAckPayload(canal_retorno,(byte *) ack_dato,sizeof(ack_dato));
        Serial.print( "->se envia de vuelta=  " );

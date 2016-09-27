@@ -1,0 +1,13 @@
+-homogeneizar variables en emisor receptor 
+ 
+ 
+-revisar los enable dpl y ack payload y sus correspondientes disables
+
+------y lo que se te ocurra
+
+
+listoooooo
+-hacer un  amirf.getdata independiente de valor de payload usando 
+---Recived_Payload_size() no posible aaray no van como parametros
+ -el emisor funciona ya con dataready
+-cabecera actualizada
