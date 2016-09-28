@@ -7,34 +7,38 @@
 #include <amirf.h>
 #include <nRF24L01.h>
 
-uint8_t  dato[5];
+uint8_t  dato[5];      				//usado en el emisor conteo de fallos
 byte dato_a_enviar[]= {"0tu"};
-byte ack_dato[]= {"0patatero"};
+byte ack_dato[]= {"0patatero"};  //usado en receptor
 byte dato_recibido[32];
 int envio_size ;
 int recepcion_size;
-int canal_retorno= 1;
-char letra[7];
-uint8_t  corto=1;
-byte direccion[5];
+int canal_retorno = 1;			//usado en receptor
+
 void setup()
 {
   Serial.begin(9600);
   Serial.println( "receptor en pruebas amirf (tamaño) " );
   Serial.println( "dpl ok, ack_payload ok   " );
-   // arrancamos y configuramos la comunicacion spi con el modulo 
+   //arrancamos y configuramos la comunicacion spi con el modulo 
    AMirf.init();
+ // nombre del NRF24l01 para la recepccion 
+   AMirf.setRADDR((byte *)"RX_01"); 
    //configuramos canal y tamaño de dato
    AMirf.payload = 32;
    AMirf.channel = 1;
-   // nombre del NRF24l01 para la recepccion 
-   AMirf.setRADDR((byte *)"RX_01"); 
+  
    // aplicamos valores y arrancamos modulo como receptor
-   AMirf.config();
    
+   AMirf.config();
+//numero de repes y tiempo entre ellas util solo en emisor
+   AMirf.configRegister(SETUP_RETR,B0001101);
+  
    AMirf.enable_DPL();
    AMirf.enable_ack_payload();
    AMirf.debug();
+
+
    AMirf.writeAckPayload(canal_retorno,(byte *) ack_dato,sizeof(ack_dato));
 }
 
