@@ -7,7 +7,7 @@
 #include <nRF24L01.h>
 
 uint8_t  dato[5];      				//usado en el emisor conteo de fallos
-byte dato_a_enviar[]= {11,3,255};
+byte dato_a_enviar[]= {'D',11,2,255};
 byte ack_dato[]= {"0patatero"};  //usado en receptor
 byte dato_recibido[32];
 int envio_size ;
@@ -19,6 +19,8 @@ void setup()
   Serial.begin(9600);
   Serial.println( "emisor en pruebas amirf  " );
   Serial.println( "dpl ok, ack_payload ok   " );
+  Serial.println( "reseteo de index   " );
+  
    //arrancamos y configuramos la comunicacion spi con el modulo 
    AMirf.init();
    //ponemos la direccion del modulo al que vamos a emitir
@@ -53,11 +55,15 @@ Serial.print( "-> " );
 Serial.print( dato_a_enviar[1]);
 Serial.print( "-> " );
 Serial.print( dato_a_enviar[2]);
+Serial.print( "-> " );
+Serial.print( dato_a_enviar[3]);
 
-dato_a_enviar[1]++;
+dato_a_enviar[2]++;// se incrementa el index 
 
-if (dato_a_enviar[2]==0) dato_a_enviar[2]=255;
-else dato_a_enviar[2]=0;
+if (dato_a_enviar[3]==0) dato_a_enviar[3]=255;// se conmuta el valor
+else dato_a_enviar[3]=0;
+
+if (dato_a_enviar[2]==8) (dato_a_enviar[2]==2);// se resetea el index
 
 
 AMirf.readRegister(OBSERVE_TX,&dato[0],1);
